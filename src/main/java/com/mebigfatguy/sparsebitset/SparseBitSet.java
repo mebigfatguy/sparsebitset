@@ -66,7 +66,7 @@ public class SparseBitSet {
         int high = bundles.length - 1;
         int mid = 0;
         Bundle bundle = bundles[0];
-        while (low < high) {
+        while (low <= high) {
             mid = (low + high) >> 1;
 
             bundle = bundles[mid];
@@ -87,13 +87,19 @@ public class SparseBitSet {
             return null;
         }
 
-        bundle = new Bundle(bit >> 6, bundleSize);
-        Bundle[] newBundles = new Bundle[bundles.length + 1];
-        System.arraycopy(bundle, 0, newBundles, 0, mid);
-        newBundles[mid] = bundle;
-        System.arraycopy(bundle, mid + 1, newBundles, mid + 2, bundles.length - mid);
+        long modulo = 64 * bundleSize;
+        Bundle newBundle = new Bundle((bit / modulo) * modulo, bundleSize);
+        if (newBundle.getBasis() > bundle.getBasis()) {
+            mid++;
+        }
 
-        return bundle;
+        Bundle[] newBundles = new Bundle[bundles.length + 1];
+        System.arraycopy(bundles, 0, newBundles, 0, mid);
+        newBundles[mid] = newBundle;
+        System.arraycopy(bundles, mid, newBundles, mid + 1, bundles.length - mid);
+        bundles = newBundles;
+
+        return newBundle;
     }
 
     @Override

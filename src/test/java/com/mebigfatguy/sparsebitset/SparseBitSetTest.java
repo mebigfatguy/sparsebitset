@@ -16,7 +16,7 @@ public class SparseBitSetTest {
     }
 
     @Test
-    public void testSimpl3BundleInsert() {
+    public void testSimple3BundleInsert() {
         SparseBitSet sbs = new SparseBitSet(3);
 
         sbs.set(64);
@@ -31,5 +31,19 @@ public class SparseBitSetTest {
         Assertions.assertTrue(sbs.get(130));
         Assertions.assertFalse(sbs.get(129));
         Assertions.assertFalse(sbs.get(131));
+    }
+
+    @Test
+    public void testSimpleDisjointBundleInsert() {
+        SparseBitSet sbs = new SparseBitSet(1);
+
+        sbs.set(1);
+        sbs.set(128);
+        Assertions.assertTrue(sbs.get(1));
+        Assertions.assertFalse(sbs.get(0));
+        Assertions.assertFalse(sbs.get(2));
+        Assertions.assertTrue(sbs.get(128));
+        Assertions.assertFalse(sbs.get(127));
+        Assertions.assertFalse(sbs.get(129));
     }
 }
