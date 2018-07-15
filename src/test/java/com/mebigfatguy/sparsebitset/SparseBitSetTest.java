@@ -16,6 +16,16 @@ public class SparseBitSetTest {
     }
 
     @Test
+    public void testNegativeSimple1BundleInsert() {
+        SparseBitSet sbs = new SparseBitSet(1);
+
+        sbs.set(-64);
+        Assertions.assertTrue(sbs.get(-64));
+        Assertions.assertFalse(sbs.get(-63));
+        Assertions.assertFalse(sbs.get(-65));
+    }
+
+    @Test
     public void testSimple3BundleInsert() {
         SparseBitSet sbs = new SparseBitSet(3);
 
@@ -121,6 +131,5 @@ public class SparseBitSetTest {
         for (int i = 0; i < 1000; i++) {
             Assertions.assertTrue(sbs.get(inputs[i]));
         }
-
     }
 }
