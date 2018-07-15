@@ -16,6 +16,8 @@
  */
 package com.mebigfatguy.sparsebitset;
 
+import java.util.Arrays;
+
 public class Bundle {
 
     private long basis;
@@ -34,7 +36,7 @@ public class Bundle {
         long relativeBit = bit - basis;
         int slot = (int) (relativeBit >> 6);
         long bitMask = 1 << (relativeBit - (64 * slot));
-        bits[slot] &= bitMask;
+        bits[slot] |= bitMask;
     }
 
     public boolean get(long bit) {
@@ -49,5 +51,10 @@ public class Bundle {
         int slot = (int) (relativeBit >> 6);
         long bitMask = 1 << (relativeBit - (64 * slot));
         bits[slot] ^= bitMask;
+    }
+
+    @Override
+    public String toString() {
+        return "{basis: " + basis + " bits: " + Arrays.toString(bits) + "}";
     }
 }

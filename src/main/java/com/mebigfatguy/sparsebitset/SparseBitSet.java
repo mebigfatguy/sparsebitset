@@ -16,6 +16,8 @@
  */
 package com.mebigfatguy.sparsebitset;
 
+import java.util.Arrays;
+
 public class SparseBitSet {
 
     private static final int DEFAULT_BUNDLE_SIZE = 8;
@@ -53,7 +55,7 @@ public class SparseBitSet {
             if (!create) {
                 return null;
             } else {
-                Bundle bundle = new Bundle(bit >> 6, bundleSize);
+                Bundle bundle = new Bundle((bit >> 6) << 6, bundleSize);
                 bundles = new Bundle[] { bundle };
                 return bundle;
             }
@@ -76,7 +78,7 @@ public class SparseBitSet {
             }
         }
 
-        if ((bundle.getBasis() < bit) && ((bundle.getBasis() + bundleBits) > bit)) {
+        if ((bundle.getBasis() <= bit) && ((bundle.getBasis() + bundleBits) > bit)) {
             return bundle;
         }
 
@@ -91,5 +93,10 @@ public class SparseBitSet {
         System.arraycopy(bundle, mid + 1, newBundles, mid + 2, bundles.length - mid);
 
         return bundle;
+    }
+
+    @Override
+    public String toString() {
+        return bundles == null ? "[]" : Arrays.toString(bundles);
     }
 }
