@@ -72,7 +72,7 @@ public class SparseBitSet {
             bundle = bundles[mid];
             if (bundle.getBasis() > bit) {
                 high = mid - 1;
-            } else if ((bundle.getBasis() + bundleBits) < bit) {
+            } else if ((bundle.getBasis() + bundleBits) <= bit) {
                 low = mid + 1;
             } else {
                 break;
