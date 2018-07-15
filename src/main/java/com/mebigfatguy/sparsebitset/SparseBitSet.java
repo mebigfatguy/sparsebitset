@@ -55,7 +55,8 @@ public class SparseBitSet {
             if (!create) {
                 return null;
             } else {
-                Bundle bundle = new Bundle((bit >> 6) << 6, bundleSize);
+                long modulo = 64 * bundleSize;
+                Bundle bundle = new Bundle((bit / modulo) * modulo, bundleSize);
                 bundles = new Bundle[] { bundle };
                 return bundle;
             }
