@@ -102,6 +102,19 @@ public class SparseBitSet {
         return newBundle;
     }
 
+    public long cardinality() {
+        if (bundles == null) {
+            return 0;
+        }
+
+        long cardinality = 0;
+        for (Bundle bundle : bundles) {
+            cardinality += bundle.getCardinality();
+        }
+
+        return cardinality;
+    }
+
     @Override
     public String toString() {
         return bundles == null ? "[]" : Arrays.toString(bundles);

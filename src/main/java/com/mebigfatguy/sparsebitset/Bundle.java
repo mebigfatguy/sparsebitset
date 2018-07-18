@@ -53,6 +53,15 @@ public class Bundle {
         bits[slot] ^= bitMask;
     }
 
+    public long cardinality() {
+        long cardinality = 0;
+        for (long l : bits) {
+            cardinality += Long.bitCount(l);
+        }
+
+        return cardinality;
+    }
+
     @Override
     public String toString() {
         return "{basis: " + basis + " bits: " + Arrays.toString(bits) + "}";
