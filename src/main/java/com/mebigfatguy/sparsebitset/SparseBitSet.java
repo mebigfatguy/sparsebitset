@@ -24,7 +24,8 @@ public class SparseBitSet {
 
     private int bundleSize;
     private int bundleBits;
-    private Bundle[] bundles;
+    private Bundle[] positiveBundles;
+    private Bundle[] negativeBundles;
 
     public SparseBitSet() {
         this(DEFAULT_BUNDLE_SIZE);
@@ -37,56 +38,62 @@ public class SparseBitSet {
 
     public void set(long bit) {
         Bundle bundle = getBundle(bit, true);
-        bundle.set(bit);
+        bundle.set(Math.abs(bit));
     }
 
     public void clear(long bit) {
         Bundle bundle = getBundle(bit, false);
         if (bundle != null) {
-            bundle.clear(bit);
+            bundle.clear(Math.abs(bit));
         }
     }
 
     public void flip(long bit) {
         Bundle bundle = getBundle(bit, true);
-        bundle.flip(bit);
+        bundle.flip(Math.abs(bit));
     }
 
     public boolean get(long bit) {
         Bundle bundle = getBundle(bit, false);
-        return bundle == null ? false : bundle.get(bit);
+        return bundle == null ? false : bundle.get(Math.abs(bit));
     }
 
     private Bundle getBundle(long bit, boolean create) {
-        if (bundles == null) {
+        long absBit = Math.abs(bit);
+        long modulo = 64 * bundleSize;
+        Bundle[] activeBundles = bit >= 0 ? positiveBundles : negativeBundles;
+        if (activeBundles == null) {
             if (!create) {
                 return null;
             } else {
-                long modulo = 64 * bundleSize;
-                Bundle bundle = new Bundle((bit / modulo) * modulo, bundleSize);
-                bundles = new Bundle[] { bundle };
+                Bundle bundle = new Bundle((absBit / modulo) * modulo, bundleSize);
+                if (bit >= 0) {
+                    positiveBundles = new Bundle[] { bundle };
+                } else {
+                    negativeBundles = new Bundle[] { bundle };
+                }
                 return bundle;
             }
         }
 
         int low = 0;
-        int high = bundles.length - 1;
+        int high = activeBundles.length - 1;
         int mid = 0;
-        Bundle bundle = bundles[0];
+        Bundle bundle = activeBundles[0];
         while (low <= high) {
             mid = (low + high) >> 1;
 
-            bundle = bundles[mid];
-            if (bundle.getBasis() > bit) {
+            bundle = activeBundles[mid];
+            if (bundle.getBasis() > absBit) {
                 high = mid - 1;
-            } else if ((bundle.getBasis() + bundleBits) <= bit) {
+            } else if ((bundle.getBasis() + bundleBits) <= absBit) {
                 low = mid + 1;
             } else {
                 break;
             }
         }
 
-        if ((bundle.getBasis() <= bit) && ((bundle.getBasis() + bundleBits) > bit)) {
+        if ((bundle.getBasis() <= absBit) && ((bundle.getBasis() + bundleBits) > absBit)) {
             return bundle;
         }
 
@@ -94,22 +101,29 @@ public class SparseBitSet {
             return null;
         }
 
-        long modulo = 64 * bundleSize;
-        Bundle newBundle = new Bundle((bit / modulo) * modulo, bundleSize);
+        Bundle newBundle = new Bundle((absBit / modulo) * modulo, bundleSize);
         if (newBundle.getBasis() > bundle.getBasis()) {
             mid++;
         }
 
-        Bundle[] newBundles = new Bundle[bundles.length + 1];
-        System.arraycopy(bundles, 0, newBundles, 0, mid);
+        Bundle[] newBundles = new Bundle[activeBundles.length + 1];
+        System.arraycopy(activeBundles, 0, newBundles, 0, mid);
         newBundles[mid] = newBundle;
-        System.arraycopy(bundles, mid, newBundles, mid + 1, bundles.length - mid);
-        bundles = newBundles;
+        System.arraycopy(activeBundles, mid, newBundles, mid + 1, activeBundles.length - mid);
+        if (bit >= 0) {
+            positiveBundles = newBundles;
+        } else {
+            negativeBundles = newBundles;
+        }
 
         return newBundle;
     }
 
     public long cardinality() {
+        return cardinality(positiveBundles) + cardinality(negativeBundles);
+    }
+
+    private long cardinality(Bundle[] bundles) {
         if (bundles == null) {
             return 0;
         }
@@ -124,6 +138,6 @@ public class SparseBitSet {
 
     @Override
     public String toString() {
-        return bundles == null ? "[]" : Arrays.toString(bundles);
+        return (positiveBundles == null ? "[]" : Arrays.toString(positiveBundles)) + "/" + (negativeBundles == null ? "[]" : Arrays.toString(negativeBundles));
     }
 }

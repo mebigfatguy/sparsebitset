@@ -37,6 +37,18 @@ public class SparseBitSetTest {
     }
 
     @Test
+    public void testNegativeAndPositiveSimple1BundleInsert() {
+        SparseBitSet sbs = new SparseBitSet(1);
+
+        sbs.set(-1);
+        sbs.set(0);
+        sbs.clear(1);
+        Assertions.assertTrue(sbs.get(-1));
+        Assertions.assertTrue(sbs.get(0));
+        Assertions.assertFalse(sbs.get(1));
+    }
+
+    @Test
     public void testSimpleFlip() {
         SparseBitSet sbs = new SparseBitSet(1);
 
