@@ -53,7 +53,7 @@ public class Bundle {
         bits[slot] ^= bitMask;
     }
 
-    public long cardinality() {
+    public long getCardinality() {
         long cardinality = 0;
         for (long l : bits) {
             cardinality += Long.bitCount(l);
