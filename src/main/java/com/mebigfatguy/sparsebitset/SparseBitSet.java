@@ -40,14 +40,21 @@ public class SparseBitSet {
         bundle.set(bit);
     }
 
-    public boolean get(long bit) {
+    public void clear(long bit) {
         Bundle bundle = getBundle(bit, false);
-        return bundle == null ? false : bundle.get(bit);
+        if (bundle != null) {
+            bundle.clear(bit);
+        }
     }
 
     public void flip(long bit) {
         Bundle bundle = getBundle(bit, true);
         bundle.flip(bit);
+    }
+
+    public boolean get(long bit) {
+        Bundle bundle = getBundle(bit, false);
+        return bundle == null ? false : bundle.get(bit);
     }
 
     private Bundle getBundle(long bit, boolean create) {

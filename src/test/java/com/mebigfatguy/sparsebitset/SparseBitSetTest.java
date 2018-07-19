@@ -16,6 +16,17 @@ public class SparseBitSetTest {
     }
 
     @Test
+    public void testClearBundleInsert() {
+        SparseBitSet sbs = new SparseBitSet(1);
+
+        sbs.set(64);
+        sbs.clear(64);
+        Assertions.assertFalse(sbs.get(64));
+        Assertions.assertFalse(sbs.get(63));
+        Assertions.assertFalse(sbs.get(65));
+    }
+
+    @Test
     public void testNegativeSimple1BundleInsert() {
         SparseBitSet sbs = new SparseBitSet(1);
 
